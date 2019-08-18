@@ -3,6 +3,7 @@ name = "raspi-nyc-train-display"
 version = "0.1.0"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
+packages = [{ include = "traindisplay" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -14,6 +15,7 @@ pydocstyle = "^4.0"
 pylint = "^2.3"
 black = {version = "^18.3-alpha.0",allows-prereleases = true}
 pytest = "^5.1"
+tox = "^3.13"
 
 [build-system]
 requires = ["poetry>=0.12"]

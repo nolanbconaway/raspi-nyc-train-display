@@ -9,7 +9,7 @@ import underground
 from traindisplay import mta
 
 # a list of checking scenarios with their desired answer
-update_scenarios = [
+UPDATE_SCENARIOS = [
     # last check is recent, do not update
     (dict(now_ts=1, last_check_ts=0, stops_ts=[]), False),
     (dict(now_ts=0, last_check_ts=0, stops_ts=[]), False),
@@ -53,7 +53,7 @@ def fake_json_file():
 
 @mock.patch("json.load")
 @mock.patch("underground.dateutils.current_time")
-@pytest.mark.parametrize("scenario, expect", update_scenarios)
+@pytest.mark.parametrize("scenario, expect", UPDATE_SCENARIOS)
 def test_needs_update(
     mock_current_time, mock_json_load, scenario, expect, fake_json_file
 ):

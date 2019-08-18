@@ -9,8 +9,9 @@ import time
 
 import click
 
-import traindisplay.mta as mta
 from underground.metadata import VALID_ROUTES
+
+from . import needs_update, update_json_file
 
 # next_train_times
 # needs_update
@@ -59,12 +60,12 @@ def main(route_id, stop_id, json_file_path, echo):
         while True:
 
             # wait a second if updates are not needed
-            if not mta.needs_update(json_file_path):
+            if not needs_update(json_file_path):
                 time.sleep(1)
                 continue
 
             # otherwise update the file and optionally print the data
-            data = mta.update_json_file(route_id, stop_id, json_file_path)
+            data = update_json_file(route_id, stop_id, json_file_path)
             if echo:
                 click.echo(json.dumps(data))
 

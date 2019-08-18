@@ -65,13 +65,13 @@ def needs_update(json_file_path: str) -> bool:
 
     # check every TRAIN_DISPLAY_MAX_WAIT regardless of train content.
     if (now_dt - last_check_dt).total_seconds() >= int(
-        os.getenv("TRAIN_DISPLAY_MAX_WAIT", 300)
+        os.getenv("TRAIN_DISPLAY_MAX_WAIT", "300")
     ):
         return True
 
     # check at most once a TRAIN_DISPLAY_MIN_WAIT.
     if (now_dt - last_check_dt).total_seconds() < int(
-        os.getenv("TRAIN_DISPLAY_MIN_WAIT", 60)
+        os.getenv("TRAIN_DISPLAY_MIN_WAIT", "60")
     ):
         return False
 
