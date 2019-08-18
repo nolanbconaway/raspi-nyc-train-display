@@ -29,7 +29,7 @@ jobs:
         poetry shell
     
     - name: Pylint
-      run: poetry run pylint traindisplay test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903,R0801,R0911,W0621
+      run: poetry run pylint traindisplay test -d C0303,C0412,C0330,E1120,R0201,E0213,R0903,R0801,R0911,W0621,C0103
     
     - name: Pydocstyle
       run: poetry run pydocstyle traindisplay test/*.py --verbose

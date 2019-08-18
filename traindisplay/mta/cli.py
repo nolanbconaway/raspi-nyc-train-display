@@ -4,14 +4,14 @@
 are needed.
 """
 
-import json
 import time
 
 import click
 
-from underground.metadata import VALID_ROUTES
+import underground
+from traindisplay import db
 
-from . import needs_update, update_json_file
+from . import needs_update, next_train_times
 
 # next_train_times
 # needs_update
@@ -25,7 +25,7 @@ from . import needs_update, update_json_file
     "route_id",
     envvar="TRAIN_DISPLAY_ROUTE_ID",
     required=True,
-    type=click.Choice(VALID_ROUTES),
+    type=click.Choice(underground.metadata.VALID_ROUTES),
     help="Route ID to find stops for. Can be read from $TRAIN_DISPLAY_ROUTE_ID.",
 )
 @click.option(
@@ -38,36 +38,37 @@ from . import needs_update, update_json_file
     help="Stop ID (from stops.txt) to target. Can be read from $TRAIN_DISPLAY_STOP_ID.",
 )
 @click.option(
-    "-f",
-    "--file",
-    "json_file_path",
-    envvar="TRAIN_DISPLAY_JSON_FILE",
-    type=click.Path(writable=True),
-    required=True,
-    help="File to store update data within. This is temp file and can be destroyed "
-    "at any time. Can be read from $TRAIN_DISPLAY_JSON_FILE.",
-)
-@click.option(
     "-e",
     "--echo",
     "echo",
     is_flag=True,
     help="Option to print out the updates to the console.",
 )
-def main(route_id, stop_id, json_file_path, echo):
+def main(route_id, stop_id, echo):
     """Run the main CLI Program."""
     try:
         while True:
 
             # wait a second if updates are not needed
-            if not needs_update(json_file_path):
+            if not needs_update(db.get_last_check(), db.get_next_stops()):
                 time.sleep(1)
                 continue
 
-            # otherwise update the file and optionally print the data
-            data = update_json_file(route_id, stop_id, json_file_path)
+            # otherwise, get updated values
+            last_check_dt = underground.dateutils.current_time()
+            stops_dt = next_train_times(route_id, stop_id)
+
+            # set values
+            db.set_next_stops(stops_dt)
+            db.set_last_check(last_check_dt)
+
+            # print if desired
             if echo:
-                click.echo(json.dumps(data))
+                last_check_str = last_check_dt.strftime("%H:%M")
+                next_stops_str = " ".join([i.strftime("%H:%M") for i in stops_dt])
+                click.echo(f"[{last_check_str}] {next_stops_str}")
+
+            time.sleep(1)
 
     except (KeyboardInterrupt, SystemExit):
         pass

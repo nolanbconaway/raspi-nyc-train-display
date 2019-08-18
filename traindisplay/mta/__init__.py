@@ -1,16 +1,13 @@
 """Interact with the MTA API via underground."""
 import datetime
-import json
 import os
 import typing
 
 import underground
 
 
-def next_train_times(
-    route_id: str, stop_id: str, **kw
-) -> typing.List[datetime.datetime]:
-    """Return a tuple of datetimes corresponding to the next trasins at a stop.
+def next_train_times(route_id: str, stop_id: str) -> typing.List[datetime.datetime]:
+    """Return a list of datetimes corresponding to the next trains at a stop.
     
     Parameters
     ----------
@@ -18,8 +15,6 @@ def next_train_times(
         Route ID.
     stop_id : str
         Stop ID, per stops.txt.
-    **kw
-        Passed to underground.SubwayFeed.get
         
     Returns
     -------
@@ -28,11 +23,11 @@ def next_train_times(
 
     """
     feed_id = underground.metadata.ROUTE_FEED_MAP[route_id]
-    feed = underground.SubwayFeed.get(feed_id, **kw)
+    feed = underground.SubwayFeed.get(feed_id)
     return sorted(feed.extract_stop_dict().get(route_id, {}).get(stop_id, list()))
 
 
-def needs_update(json_file_path: str) -> bool:
+def needs_update(last_check_dt: datetime.datetime, stops_dt: datetime.datetime) -> bool:
     """Implement logic to determine if current data are out of date.
     
     Reads from env variables for:
@@ -41,24 +36,11 @@ def needs_update(json_file_path: str) -> bool:
     - TRAIN_DISPLAY_PEAK_HOURS
 
     """
-    # need to check if data do not exist
-    if not os.path.exists(json_file_path):
+    # check if last check is not known
+    if last_check_dt is None:
         return True
 
-    # read json
-    with open(json_file_path, "r") as file:
-        data = json.load(file)
-
-    # need to check if data are empty or expected fields are not there
-    if not data or "last_check_ts" not in data or "stops_ts" not in data:
-        return True
-
-    # get datetimes
     now_dt = underground.dateutils.current_time()
-    last_check_dt = underground.dateutils.epoch_to_datetime(data["last_check_ts"])
-    stops_dt = sorted(
-        [underground.dateutils.epoch_to_datetime(i) for i in data["stops_ts"]]
-    )
 
     if last_check_dt > now_dt:
         raise ValueError("Last check is in the future. Something is wrong.")
@@ -100,22 +82,3 @@ def needs_update(json_file_path: str) -> bool:
 
     # otherwise do not update
     return False
-
-
-def update_json_file(route_id: str, stop_id: str, json_file_path: str, **kw):
-    """Update the JSON data with stop times for a route/stop."""
-    # get stops and current ts
-    now_ts = underground.dateutils.current_time(epoch=True)
-    stops_ts = sorted(
-        [
-            underground.dateutils.datetime_to_epoch(i)
-            for i in next_train_times(route_id, stop_id, **kw)
-        ]
-    )
-
-    data = dict(last_check_ts=now_ts, stops_ts=stops_ts)
-
-    with open(json_file_path, "w") as file:
-        json.dump(data, file, indent=2)
-
-    return data
