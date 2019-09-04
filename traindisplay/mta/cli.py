@@ -9,13 +9,7 @@ import time
 import click
 
 import underground
-from traindisplay import db
-
-from . import needs_update, next_train_times
-
-# next_train_times
-# needs_update
-# update_json_file
+from traindisplay import db, mta
 
 
 @click.command()
@@ -50,13 +44,13 @@ def main(route_id, stop_id, echo):
         while True:
 
             # wait a second if updates are not needed
-            if not needs_update(db.get_last_check(), db.get_next_stops()):
+            if not mta.needs_update(db.get_last_check(), db.get_next_stops()):
                 time.sleep(1)
                 continue
 
             # otherwise, get updated values
             last_check_dt = underground.dateutils.current_time()
-            stops_dt = next_train_times(route_id, stop_id)
+            stops_dt = mta.next_train_times(route_id, stop_id)
 
             # set values
             db.set_next_stops(stops_dt)

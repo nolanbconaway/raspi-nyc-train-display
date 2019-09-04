@@ -10,6 +10,7 @@ python = "^3.6"
 underground = {git = "https://github.com/nolanbconaway/underground.git"}
 click = "^7.0"
 sqlitedict = "^1.6"
+pygame = "^1.9"
 
 [tool.poetry.dev-dependencies]
 pydocstyle = "^4.0"
