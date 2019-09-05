@@ -71,24 +71,21 @@ def display_train_times(
 
     # add stop times
     for num, dt in enumerate(stops_dt_str):
-        text = pygame.font.SysFont(text_font_path, 100).render(dt, True, text_color)
+        text = pygame.font.SysFont(text_font_path, 90).render(dt, True, text_color)
 
-        # text is centered horizontally in the right half of the display
-        xpos = width * 3 / 4 - text.get_width() // 2
+        xpos = width * 4 / 5 - text.get_width() // 2
 
-        # text is centered vertically within counds determined by padding
-        # and the number of stops to display
         ypos = (
-            50
-            + (height - 100) / len(stops_dt_str) * num
-            + (height - 100) / len(stops_dt_str) / 2
+            30
+            + (height - 60) / len(stops_dt_str) * num
+            + (height - 60) / len(stops_dt_str) / 2
             - text.get_height() // 2
         )
 
         screen.blit(text, (xpos, ypos))
 
     # add train logo circle
-    pygame.draw.circle(screen, text_color, (int(width / 3.5), int(height / 2)), 110)
+    pygame.draw.circle(screen, text_color, (int(width / 3.5), int(height / 2)), 120)
 
     # add train logo letter
     text = pygame.font.SysFont(text_font_path, 200).render(route_id, True, (0, 0, 0))
