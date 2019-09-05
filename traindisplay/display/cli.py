@@ -28,6 +28,7 @@ def main(route_id):
     """Run the main CLI Program."""
     loop = True  # for control flow later
     pygame.init()
+    pygame.mouse.set_visible(0)
 
     # Set up the screen
     screen = pygame.display.set_mode((480, 320))
