@@ -24,7 +24,14 @@ from traindisplay import db, display
     type=click.Choice(underground.metadata.VALID_ROUTES),
     help="Route ID to find stops for. Can be read from $TRAIN_DISPLAY_ROUTE_ID.",
 )
-def main(route_id):
+@click.option(
+    "-e",
+    "--echo",
+    "echo",
+    is_flag=True,
+    help="Option to print out the updates to the console.",
+)
+def main(route_id, echo):
     """Run the main CLI Program."""
     loop = True  # for control flow later
     pygame.init()
@@ -63,7 +70,17 @@ def main(route_id):
             db.set_last_display(underground.dateutils.current_time())
 
             pygame.display.flip()
-            time.sleep(1)
+
+            if echo:
+                last_display_str = last_display_dt.strftime("%H:%M:%S")
+                update_flag_str = (
+                    "updated"
+                    if display.needs_update(last_check_dt, last_display_dt)
+                    else "not updated"
+                )
+                click.echo(f"[{last_display_str}] {update_flag_str}.")
+
+            time.sleep(10)
 
     except (KeyboardInterrupt, SystemExit):
         pass
