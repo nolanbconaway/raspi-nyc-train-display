@@ -37,7 +37,7 @@ $ supervisord -c supervisord.conf
 
 # on a raspberry pi, you must run as root for framebuffer privs
 # you might need to sudo pip install . as well!
-$ sudo supervisord -c supervisord-rpi.conf
+$ sudo -E supervisord -c supervisord-rpi.conf
 
 # if you don't want supervisor daemonized
 $ supervisord -c supervisord.conf --nodaemon
