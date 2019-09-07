@@ -44,6 +44,7 @@ def main(route_id, echo):
 
     # hide mouse if on rpi through fbi
     if os.getenv("SDL_VIDEODRIVER") == "fbcon" and os.getenv("SDL_FBDEV") == "/dev/fb1":
+        pygame.display.init()
         pygame.mouse.set_visible(False)
 
     # Set up the screen
