@@ -33,7 +33,11 @@ Install the library, export your API key, then run supervisor.
 ``` sh
 $ pip install .
 $ export MTA_API_KEY='...'
-$ supervisord -c supervisord.conf  # or supervisord-rpi.conf
+$ supervisord -c supervisord.conf 
+
+# on a raspberry pi, you must run as root for framebuffer privs
+# you might need to sudo pip install . as well!
+$ sudo supervisord -c supervisord-rpi.conf
 
 # if you don't want supervisor daemonized
 $ supervisord -c supervisord.conf --nodaemon
