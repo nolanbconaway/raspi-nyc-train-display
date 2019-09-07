@@ -6,9 +6,44 @@ This is a raspberry pi application designed to run on a [PiTFT](https://www.adaf
 
 ## Quickstart
 
-> todo
+This program consists of two processes: an MTA checker, and a Display updater. They both run as daemons run from the CLI. The easiest way to make sure both are running is through supervisor.
 
-### Raspberry Pi Setup
+### Get an API Key
+
+To request MTA realtime data, you'll need an API key, [register here](https://datamine.mta.info/user/register).
+
+### Edit supervisord.conf (or supervisord-rpi.conf)
+
+I have set up two supervisor configurations, one for development (works on my macbook pro), and one for use on a raspberry pi (which send the display to frame buffer). In either case you'll need to edit sections like
+
+``` ini
+[program:display]
+command=python -m traindisplay.display.cli -e --route Q ; Set your route
+
+[program:mta]
+command=python -m traindisplay.mta.cli -e --route Q --stop D27N ; Set your route / stop
+```
+
+You can look up your stop in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)!
+
+### Run supervisor
+
+Install the library, export your API key, then run supervisor.
+
+``` sh
+$ pip install .
+$ export MTA_API_KEY='...'
+$ supervisord -c supervisord.conf  # or supervisord-rpi.conf
+
+# if you don't want supervisor daemonized
+$ supervisord -c supervisord.conf --nodaemon
+```
+
+## Raspberry Pi Setup
+
+Setting up the PiTFT and configuring Pygame to communicate with the framebuffer
+interface are nontrivial tasks! I have it working on my machine but it took some elbow
+grease and I don't have step by step yet.
 
 > todo
 
@@ -26,8 +61,7 @@ The MTA realtime API is queried efficiently, only when I (Nolan) have decided ne
 2. When upcoming arrivals are scheduled, checking if a known arrival has elapsed.
 3. Check every `M` seconds during "peak" hours, set through an environment variable. This is useful to ensure up-to-date data during hours you usually take the train.
 
-When an update is needed, upcoming arrivals for a specified route and stop are stored within the SQLite database
-so that the display can show them.
+When an update is needed, upcoming arrivals for a specified route and stop are stored within the SQLite database so that the display can show them.
 
 You can run the process via command line:
 
@@ -51,6 +85,15 @@ Options:
   --help                          Show this message and exit.
 ```
 
+The process reads from the following env variables:
+
+* `MTA_API_KEY` : Your API key.
+* `TRAIN_DISPLAY_ROUTE_ID` : The route ID.
+* `TRAIN_DISPLAY_STOP_ID` : The stop ID, from [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip).
+* `TRAIN_DISPLAY_PEAK_HOURS` : Comma delimited list of peak hours, like `'7,8'` .
+* `TRAIN_DISPLAY_MIN_WAIT` : Minimum delay seconds between requests. Default 60.
+* `TRAIN_DISPLAY_MAX_WAIT` : Maximum delay seconds between requests. Default 300.
+
 ### Display Updater
 
 The display is updated whenever new information is available from the MTA checker. It is based on Pygame, which lets me develop on my personal computer but also can work on a Raspberry Pi.
@@ -71,4 +114,9 @@ Options:
 
 On a raspberry pi, you will want this run using under `sudo -E` , otherwise the 
 framebuffer interface is not accessible.
+
+* `TRAIN_DISPLAY_ROUTE_ID` : The route ID.
+* `SDL_VIDEODRIVER` : Set to `'fbcon'` for framebuffer display on a raspberry pi.
+* `SDL_FBDEV` : Set to `'/dev/fb1'` for framebuffer display on a raspberry pi.
+* `PYGAME_HIDE_SUPPORT_PROMPT` : Set to `'hide'` to disable the pygame welcome message.
 

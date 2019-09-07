@@ -3,7 +3,6 @@ name = "raspi-nyc-train-display"
 version = "0.1.0"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
-packages = [{ include = "traindisplay" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -11,6 +10,7 @@ underground = {git = "https://github.com/nolanbconaway/underground.git"}
 click = "^7.0"
 sqlitedict = "^1.6"
 pygame = "^1.9"
+supervisor = "^4.0"
 
 [tool.poetry.dev-dependencies]
 pydocstyle = "^4.0"

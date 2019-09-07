@@ -12,6 +12,24 @@ import underground
 from traindisplay import db, mta
 
 
+def persist_stop_times(
+    route_id: str, stop_id: str, api_key: str = None, echo: bool = False
+):
+    """Query the API and persist the stop times in the database."""
+    last_check_dt = underground.dateutils.current_time()
+    stops_dt = mta.next_train_times(route_id, stop_id, api_key=api_key)
+
+    # set values
+    db.set_next_stops(stops_dt)
+    db.set_last_check(last_check_dt)
+
+    # print if desired
+    if echo:
+        last_check_str = last_check_dt.strftime("%H:%M")
+        next_stops_str = " ".join([i.strftime("%H:%M") for i in stops_dt])
+        click.echo(f"[{last_check_str}] {next_stops_str}")
+
+
 @click.command()
 @click.option(
     "-r",
@@ -46,6 +64,10 @@ from traindisplay import db, mta
 )
 def main(route_id, stop_id, echo, api_key):
     """Run the main CLI Program."""
+    # Init the database.
+    persist_stop_times(route_id, stop_id, api_key=api_key, echo=echo)
+    time.sleep(1)
+
     try:
         while True:
 
@@ -55,18 +77,7 @@ def main(route_id, stop_id, echo, api_key):
                 continue
 
             # otherwise, get updated values
-            last_check_dt = underground.dateutils.current_time()
-            stops_dt = mta.next_train_times(route_id, stop_id, api_key=api_key)
-
-            # set values
-            db.set_next_stops(stops_dt)
-            db.set_last_check(last_check_dt)
-
-            # print if desired
-            if echo:
-                last_check_str = last_check_dt.strftime("%H:%M")
-                next_stops_str = " ".join([i.strftime("%H:%M") for i in stops_dt])
-                click.echo(f"[{last_check_str}] {next_stops_str}")
+            persist_stop_times(route_id, stop_id, api_key=api_key, echo=echo)
 
             time.sleep(1)
 
