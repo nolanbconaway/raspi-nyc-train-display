@@ -38,7 +38,13 @@ from traindisplay import db, mta
     is_flag=True,
     help="Option to print out the updates to the console.",
 )
-def main(route_id, stop_id, echo):
+@click.option(
+    "--api-key",
+    "api_key",
+    default=None,
+    help="MTA API key. Read from $MTA_API_KEY if not provided.",
+)
+def main(route_id, stop_id, echo, api_key):
     """Run the main CLI Program."""
     try:
         while True:
@@ -50,7 +56,7 @@ def main(route_id, stop_id, echo):
 
             # otherwise, get updated values
             last_check_dt = underground.dateutils.current_time()
-            stops_dt = mta.next_train_times(route_id, stop_id)
+            stops_dt = mta.next_train_times(route_id, stop_id, api_key=api_key)
 
             # set values
             db.set_next_stops(stops_dt)

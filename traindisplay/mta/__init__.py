@@ -6,7 +6,9 @@ import typing
 import underground
 
 
-def next_train_times(route_id: str, stop_id: str) -> typing.List[datetime.datetime]:
+def next_train_times(
+    route_id: str, stop_id: str, api_key: str = None
+) -> typing.List[datetime.datetime]:
     """Return a list of datetimes corresponding to the next trains at a stop.
     
     Parameters
@@ -23,7 +25,7 @@ def next_train_times(route_id: str, stop_id: str) -> typing.List[datetime.dateti
 
     """
     feed_id = underground.metadata.ROUTE_FEED_MAP[route_id]
-    feed = underground.SubwayFeed.get(feed_id)
+    feed = underground.SubwayFeed.get(feed_id, api_key=api_key)
     return sorted(feed.extract_stop_dict().get(route_id, {}).get(stop_id, list()))
 
 

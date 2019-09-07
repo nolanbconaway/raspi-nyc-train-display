@@ -8,7 +8,6 @@ import pygame
 
 import underground
 from traindisplay.display.metadata import ROUTE_COLORS
-from underground.dateutils import datetime_to_timestring
 
 DATA_PATH = Path(__file__).parent.parent / "data"
 
@@ -45,8 +44,6 @@ def needs_update(
 
     return False
 
-    # define a function to update the display
-
 
 def display_train_times(
     route_id: str,
@@ -65,7 +62,9 @@ def display_train_times(
 
     # make strings out of stop datetimes
     if stops_dt:
-        stops_dt_str = [datetime_to_timestring(i) for i in stops_dt[:3]]
+        stops_dt_str = [
+            underground.dateutils.datetime_to_timestring(i) for i in stops_dt[:3]
+        ]
     else:
         stops_dt_str = ["No trains", "scheduled!", "Sorry :)"]
 
@@ -74,7 +73,6 @@ def display_train_times(
         text = pygame.font.SysFont(text_font_path, 90).render(dt, True, text_color)
 
         xpos = width * 4 / 5 - text.get_width() // 2
-
         ypos = (
             30
             + (height - 60) / len(stops_dt_str) * num
@@ -94,7 +92,10 @@ def display_train_times(
     )
 
     # add last update dt
-    text = pygame.font.SysFont(text_font_path, 32).render(
-        f"As of {datetime_to_timestring(last_check_dt)}", True, (50, 50, 50)
+    last_check_str = underground.dateutils.datetime_to_timestring(last_check_dt)
+    text = pygame.font.SysFont(text_font_path, 20).render(
+        f"Schedule updated {last_check_str}", True, (50, 50, 50)
     )
     screen.blit(text, (width - text.get_width() - 10, height - text.get_height() - 10))
+
+    pygame.display.flip()
