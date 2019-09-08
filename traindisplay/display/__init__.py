@@ -56,7 +56,9 @@ def display_train_times(
     width, height = screen.get_size()
 
     # get text properties
-    text_color = hex2rgb(ROUTE_COLORS[route_id].lstrip("#"))
+    logo_back_color = hex2rgb(ROUTE_COLORS[route_id].lstrip("#"))
+    logo_text_color = (0, 0, 0) if route_id in "NQRW" else (255, 255, 255)
+    stops_text_color = logo_back_color if route_id in "NQRW" else (255, 255, 255)
     text_font_path = str(DATA_PATH / "fonts" / "helvetica.ttf")
     screen.fill((0, 0, 0))
 
@@ -70,7 +72,9 @@ def display_train_times(
 
     # add stop times
     for num, dt in enumerate(stops_dt_str):
-        text = pygame.font.SysFont(text_font_path, 90).render(dt, True, text_color)
+        text = pygame.font.SysFont(text_font_path, 90).render(
+            dt, True, stops_text_color
+        )
 
         xpos = width * 4 / 5 - text.get_width() // 2
         ypos = (
@@ -83,10 +87,14 @@ def display_train_times(
         screen.blit(text, (xpos, ypos))
 
     # add train logo circle
-    pygame.draw.circle(screen, text_color, (int(width / 3.5), int(height / 2)), 120)
+    pygame.draw.circle(
+        screen, logo_back_color, (int(width / 3.5), int(height / 2)), 120
+    )
 
     # add train logo letter
-    text = pygame.font.SysFont(text_font_path, 200).render(route_id, True, (0, 0, 0))
+    text = pygame.font.SysFont(text_font_path, 200).render(
+        route_id, True, logo_text_color
+    )
     screen.blit(
         text, (width / 3.5 - text.get_width() // 2, height / 2 - text.get_height() // 2)
     )

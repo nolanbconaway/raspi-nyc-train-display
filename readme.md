@@ -130,6 +130,6 @@ framebuffer interface is not accessible.
 
 ## TODO
 
-* [ ] Add better text color for some train likes (e.g., 4, 5, 6).
+* [x] Add better text color for some train likes (e.g., 4, 5, 6).
 * [ ] Raspi setup docs. Or host an image somewhere?
 
