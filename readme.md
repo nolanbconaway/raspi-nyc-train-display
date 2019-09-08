@@ -1,6 +1,8 @@
 # Raspberry Pi Subway Stop Monitor
 
-![](sample.png)
+<p align="center">
+  <img src="sample.png" width="480" height="320">
+</p>
 
 [![GitHub Actions status](https://github.com/nolanbconaway/raspi-nyc-train-display/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/raspi-nyc-train-display/actions)
 
