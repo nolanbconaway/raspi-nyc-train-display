@@ -37,7 +37,7 @@ Install the library, export your API key, then run supervisor.
 ``` sh
 $ pip install .
 $ export MTA_API_KEY='...'
-$ supervisord -c supervisord.conf 
+$ supervisord -c supervisord.conf
 
 # on a raspberry pi, you must run as root for framebuffer privs
 # you might need to sudo pip install . as well!
@@ -127,4 +127,9 @@ framebuffer interface is not accessible.
 * `SDL_VIDEODRIVER` : Set to `'fbcon'` for framebuffer display on a raspberry pi.
 * `SDL_FBDEV` : Set to `'/dev/fb1'` for framebuffer display on a raspberry pi.
 * `PYGAME_HIDE_SUPPORT_PROMPT` : Set to `'hide'` to disable the pygame welcome message.
+
+## TODO
+
+* [ ] Add better text color for some train likes (e.g., 4, 5, 6).
+* [ ] Raspi setup docs. Or host an image somewhere?
 
