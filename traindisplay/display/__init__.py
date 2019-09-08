@@ -66,7 +66,7 @@ def display_train_times(
             underground.dateutils.datetime_to_timestring(i) for i in stops_dt[:3]
         ]
     else:
-        stops_dt_str = ["No trains", "scheduled!", "Sorry :)"]
+        stops_dt_str = ["No", "trains", ":-("]
 
     # add stop times
     for num, dt in enumerate(stops_dt_str):
@@ -92,9 +92,14 @@ def display_train_times(
     )
 
     # add last update dt
-    last_check_str = underground.dateutils.datetime_to_timestring(last_check_dt)
-    text = pygame.font.SysFont(text_font_path, 20).render(
-        f"Schedule updated {last_check_str}", True, (50, 50, 50)
+    if last_check_dt:
+        last_check_str = underground.dateutils.datetime_to_timestring(last_check_dt)
+        last_check_str = f"Schedule updated {last_check_str}"
+    else:
+        last_check_str = ""
+
+    text = pygame.font.SysFont(text_font_path, 25).render(
+        last_check_str, True, (50, 50, 50)
     )
     screen.blit(text, (width - text.get_width() - 10, height - text.get_height() - 10))
 
