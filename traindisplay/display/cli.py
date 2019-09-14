@@ -53,6 +53,8 @@ def main(route_id, echo):
     # update once to init the display
     display.display_train_times(route_id, db.get_last_check(), db.get_next_stops())
     db.set_last_display(underground.dateutils.current_time())
+    if echo:
+        click.echo("Display updated with latest from db.")
 
     try:
         while True:
