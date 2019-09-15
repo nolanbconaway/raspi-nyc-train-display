@@ -28,7 +28,7 @@ command=python -m traindisplay.display.cli -e --route Q ; Set your route
 command=python -m traindisplay.mta.cli -e --route Q --stop D27N ; Set your route / stop
 ```
 
-You can look up your stop in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip)!
+You can look up your stop in [stops.txt](http://web.mta.info/developers/data/nyct/subway/google_transit.zip), or using the [ `underground` command line tool](https://github.com/nolanbconaway/underground#findstops)
 
 ### Run supervisor
 
@@ -49,11 +49,7 @@ $ supervisord -c supervisord.conf --nodaemon
 
 ## Raspberry Pi Setup
 
-Setting up the PiTFT and configuring Pygame to communicate with the framebuffer
-interface are nontrivial tasks! I have it working on my machine but it took some elbow
-grease and I don't have step by step yet.
-
-> todo
+See [this tutorial][raspi-setup.md] for a detailed walkthrough on how to set up your raspberry pi.
 
 ## Architecture
 

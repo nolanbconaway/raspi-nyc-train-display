@@ -1,16 +1,18 @@
-# Setting up a rasberry pi for the display
+# Setting up a raspberry pi for the display
 
 This document will assume that you:
 
 1. Have a modern Raspberry Pi. I use a model 3 B+ but anything 2+ should work. Maybe even earlier, I don't know.
-2. Have an [Adafruit PiTFT](https://www.adafruit.com/product/2441) display to connect to it.
+2. Have an [Adafruit PiTFT](https://www.adafruit.com/product/2441) display to connect to it. This should be the 3.5in (320x480) model, as the display is set up to fit on that resolution.
 3. Live in NYC and want the PiTFT to show train stop times at your stop :-).
+
+I suppose I am also assuming you have some familiarity with command line tools (ssh, nano, etc).
 
 ## Before you do anything: get an API Key
 
 To request MTA realtime data, you'll need an API key, [register here](https://datamine.mta.info/user/register).
 
-## Step 1: Install 2018-03-14 raspbian image to a microSD card
+## Step 1: Install the 2018-03-14 raspbian image to a microSD card
 
 This is the most recent image which has been tested by Adafruit for the PiTFT.
 
@@ -30,7 +32,7 @@ Just do it. It'll take awhile.
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 
-## Step 3: Run the Adafruit PiTFT installer script.
+## Step 3: Run the Adafruit PiTFT installer script
 
 This sets up your Pi to use the PiTFT as a framebuffer interface. Per [adafruit docs](https://learn.adafruit.com/adafruit-pitft-28-inch-resistive-touchscreen-display-raspberry-pi/easy-install-2), run:
 
@@ -57,7 +59,7 @@ Select configuration:
 
 ```
 
-I chose 4 (3.5in resistive touch) but this depends on your PiTFT model.
+I chose 4 (3.5in resistive touch) since that's what I have. I set up the display to fit in 320x480, so it's ideally also what you have.
 
 ### Rotation
 
@@ -77,7 +79,7 @@ I chose **3**, landscape, so that the power cable is at the top of the display.
 ### PiTFT as Text Console
 
 ``` 
-Would you like the console to appear on the PiTFT display? [y/n] 
+Would you like the console to appear on the PiTFT display? [y/n]
 ```
 
 `Y` . We'll use Pygame to display images on the framebuffer, so you won't need the GUI.
@@ -133,18 +135,20 @@ cd ~
 wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tar.xz
 tar xf Python-3.7.4.tar.xz
 cd Python-3.7.4
-./configure 
+./configure
 make -j 4
 sudo make altinstall
+
+# cleanup
 cd ../
 sudo rm -rf Python-3.7.4*
 ```
 
-You should now be able to access your new Python installation via `python3.7` and `pip3.7` commands.
+You should be able to access your new Python installation via `python3.7` and `pip3.7` commands.
 
 ## Step 5: Clone the repo and install the python requirements
 
-You'll need to install using `sudo` as superuser is required to access the frame buffer.
+You'll need to install using `sudo` , since superuser is required to access the frame buffer.
 
 ``` 
 git clone https://github.com/nolanbconaway/raspi-nyc-train-display.git
@@ -165,10 +169,10 @@ export MTA_API_KEY="..."
 Edit the file with `nano` or whatever text editor you'd like.
 
 ``` sh
-nano supervisord-rpi.conf 
+nano supervisord-rpi.conf
 ```
 
-You'll need to edit these sections:
+Below are the (current as of Sept 2019) default values set within the sections you'll want to edit.
 
 ``` ini
 [program:display]
@@ -182,17 +186,24 @@ command=python -m traindisplay.mta.cli -e --route Q --stop D27N
 priority=1
 ```
 
-### Change the train route and stop ID to your needs.
+The following subsections will explain what you ought to change.
+
+### Change the train route and stop ID to your needs
 
 You can use the [underground](https://github.com/nolanbconaway/underground) command line tool (installed with this repo!) to find your stop ID like:
 
 ``` sh
-underground findstops "bedford av"
+$ underground findstops "bedford av"
+
+ID: L08N    Direction: NORTH    Lat/Lon: 40.717304,-73.956872    Name: BEDFORD AV
+ID: L08S    Direction: SOUTH    Lat/Lon: 40.717304,-73.956872    Name: BEDFORD AV
 ```
+
+Find the stop you want to track and put that value within the `mta` section.
 
 ### Change `python` to `python3.7` 
 
-Right now the name `python` points to python 2.7 on your raspberry pi. Change it to python3.7 in the display and mta sections of supervisord-rpi.conf.
+Right now the name `python` points to python 2.7 on your raspberry pi. Change it to python3.7 in the display and mta sections.
 
 ### You should now have something like
 
@@ -208,15 +219,15 @@ command=python3.7 -m traindisplay.mta.cli -e --route <ROUTE> --stop <STOP>
 priority=1
 ```
 
-## Step 8: Test out the display!
+## Step 8: Test out the display
 
-Now you can use supervisor to run the display and mta processes! However, to control the frame buffer, you'll need sudo privileges. You'll also need to add the `-E` flag so that supervisor has access to the `MTA_API_KEY` you exported. Here is the command:
+Now you can use supervisor to run the display and mta processes! To control the frame buffer, you'll need sudo privileges. You'll also need to add the `-E` flag so that supervisor has access to the `MTA_API_KEY` you exported. Here is the command:
 
 ``` sh
 sudo -E supervisord -c supervisord-rpi.conf --nodaemon
 ```
 
-You'll see something like:
+Wait a minute, and you should see your PiTFT display updated with upcoming trains! In your terminal, you'll see something like:
 
 ``` 
 2019-09-13 23:34:22,756 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
@@ -231,24 +242,7 @@ You'll see something like:
 2019-09-13 23:34:24,842 INFO success: display entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
 ```
 
-That'll start running the two processes, and you _should_ see your PiTFT display updated with upcoming trains!
-
-### Debugging
-
-If you start seeing messages like this, then something is wrong.
-
-``` 
-2019-09-13 23:54:39,844 INFO spawned: 'mta' with pid 15758
-2019-09-13 23:54:39,856 INFO spawned: 'display' with pid 15759
-2019-09-13 23:54:39,967 INFO exited: mta (exit status 1; not expected)
-2019-09-13 23:54:39,972 INFO exited: display (exit status 1; not expected)
-2019-09-13 23:54:40,982 INFO spawned: 'mta' with pid 15760
-2019-09-13 23:54:40,994 INFO spawned: 'display' with pid 15761
-2019-09-13 23:54:41,107 INFO exited: mta (exit status 1; not expected)
-2019-09-13 23:54:41,114 INFO exited: display (exit status 1; not expected)
-```
-
-You can start debugging by looking into the `stderr` files generated within `/tmp/` . Supervisor creates files named like `display-stderr---supervisor ... .log` and `mta-stderr---supervisor ... .log` that you can look into to see why things aren't working.
+Your display might say there are no trains at first. You can either wait a few minutes for the database to sync up or  restart supervisor.
 
 ## Step 9: Running on startup as a daemon
 
@@ -291,13 +285,13 @@ Add an entry at the bottom so your crontab looks like:
 @reboot cd /home/pi/raspi-nyc-train-display && sudo -E supervisord -c supervisord-rpi.conf
 ```
 
-That command runs on reboot. It Moves the shell into the train display directory and runs supervisor.
+That command runs on reboot. It moves the shell into the train display directory and runs supervisor.
 
-### Hardcode your API key in supervisord-rpi.conf
+### But wait! hardcode your API key in supervisord-rpi.conf first
 
-When you reboot your pi, you'll lose all exported variables. You might notice that we didn't `export MTA_API_KEY='...'` in the command above, so the application will break as soon as your API key is needed.
+When you reboot your pi, you'll lose all exported variables. You might notice that we didn't `export MTA_API_KEY='...'` in crontab, so the application should and will break as soon as your API key is needed.
 
-To make sure your API key is always available, we can hardcode it in supervisord-rpi.conf. This probably isn't the best approach in terms of security but it should do for now :-).
+To make sure your API key is always available, we can hardcode it in supervisord-rpi.conf. This probably isn't the best approach in terms of security but it will do for now :-).
 
 Looking into the `supervisord` section of supervisord-rpi.conf, you can see where the API key is read from the user environment.
 
@@ -306,10 +300,10 @@ Looking into the `supervisord` section of supervisord-rpi.conf, you can see wher
 logfile=/tmp/supervisord.log
 pidfile=/tmp/supervisord.pid
 nodaemon=false
-environment=MTA_API_KEY="%(ENV_MTA_API_KEY)s" ; <<<< HERE 
+environment=MTA_API_KEY="%(ENV_MTA_API_KEY)s" ; <<<< HERE
 ```
 
-Change that into this so that the application automatically has access to the key:
+Change that into this so that the application has access to the key:
 
 ``` ini
 [supervisord]
@@ -321,7 +315,7 @@ environment=MTA_API_KEY="<YOUR KEY>"
 
 ### Install mailutils
 
-If you're running things through crontab, you'll also want to install mailutils so that you can read error messages that mightve been generated.
+If you're running things through crontab, you'll also want to install mailutils so that you can read error messages that might've been generated.
 
 ``` sh
 sudo apt-get install mailutils
@@ -329,11 +323,11 @@ sudo apt-get install mailutils
 
 Now, if something goes wrong, you'll get a mail message within your shell.
 
-### Reboot!
+### Reboot
 
 Now you can test out your new train display by rebooting the raspberry pi. With any luck, it'll boot up and automatically show upcoming trains to your stop.
 
 ## Problems?
 
-I wrote this as I set up my own raspberry pi. Your results may vary. Please let me know if you run into trouble!
+I wrote this as I set up my own raspberry pi and only validated it by running through from scratch. Your results may vary. Please let me know if you run into trouble!
 
