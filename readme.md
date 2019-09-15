@@ -10,6 +10,8 @@ This is a raspberry pi application designed to run on a [PiTFT](https://www.adaf
 
 ## Quickstart
 
+> See [this tutorial](raspi-setup.md) for setup instructions for a raspberry pi.
+
 This program consists of two processes: an MTA checker, and a Display updater. They both run as daemons run from the CLI. The easiest way to make sure both are running is through supervisor.
 
 ### Get an API Key
@@ -49,7 +51,7 @@ $ supervisord -c supervisord.conf --nodaemon
 
 ## Raspberry Pi Setup
 
-See [this tutorial][raspi-setup.md] for a detailed walkthrough on how to set up your raspberry pi.
+See [this tutorial](raspi-setup.md) for a detailed walkthrough on how to set up your raspberry pi.
 
 ## Architecture
 
