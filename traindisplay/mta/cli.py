@@ -37,7 +37,7 @@ def persist_stop_times(
     "route_id",
     envvar="TRAIN_DISPLAY_ROUTE_ID",
     required=True,
-    type=click.Choice(underground.metadata.VALID_ROUTES),
+    type=click.Choice(set(underground.metadata.ROUTE_FEED_MAP.keys())),
     help="Route ID to find stops for. Can be read from $TRAIN_DISPLAY_ROUTE_ID.",
 )
 @click.option(

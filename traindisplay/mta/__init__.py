@@ -24,7 +24,7 @@ def next_train_times(
         A sorted list of the planned stop times.
 
     """
-    feed_id = underground.metadata.ROUTE_FEED_MAP[route_id]
+    feed_id = underground.metadata.get_feed_id(route_id)
     feed = underground.SubwayFeed.get(feed_id, api_key=api_key)
     return sorted(feed.extract_stop_dict().get(route_id, {}).get(stop_id, list()))
 

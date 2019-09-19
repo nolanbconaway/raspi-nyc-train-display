@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "raspi-nyc-train-display"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Nolan Conaway <nolanbconaway@gmail.com>"]
 packages = [{ include = "traindisplay" }]
