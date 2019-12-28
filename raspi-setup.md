@@ -90,9 +90,9 @@ After you reboot, you should see a console appear on the PiTFT!
 
 ## Step 4: Install Python 3.6+
 
-By default 2.7 is the only python installed on a Raspberry Pi. Maybe 3.5 is on there but that's still not good enough (this application needs 3.6+).
+> Newer distibutions of raspbian (starting with Buster) now ship with Python 3.7, so if you use one of those then you won't need to follow these steps. The distribution tested by Adafruit (2018-03-14) comes with 3.5.
 
-Here are instructions for installing 3.7.4 (basically copied from [here](https://github.com/instabot-py/instabot.py/wiki/Installing-Python-3.7-on-Raspberry-Pi)):
+You'll need at least Python 3.6 to run the display software, so here are instructions for installing 3.7.4 (basically copied from [here](https://github.com/instabot-py/instabot.py/wiki/Installing-Python-3.7-on-Raspberry-Pi)):
 
 I ended up having to fix my apt-get by running:
 
