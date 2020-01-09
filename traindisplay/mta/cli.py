@@ -7,8 +7,8 @@ are needed.
 import time
 
 import click
-
 import underground
+
 from traindisplay import db, mta
 
 
