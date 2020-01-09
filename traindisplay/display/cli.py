@@ -5,11 +5,12 @@ are needed.
 """
 
 import os
+import time
 
 import click
 import pygame
-
 import underground
+
 from traindisplay import db, display
 
 
@@ -37,8 +38,18 @@ def check_continue_loop():
 @click.option(
     "-e", "--echo", "echo", is_flag=True, help="Option to print updates to the console."
 )
-def main(route_id, echo):
+@click.option(
+    "--sleep",
+    "sleep",
+    type=float,
+    default=0,
+    help="Seconds to wait before first update. This can be used to avoid "
+    + "displaying train times before the MTA checker has populated the database. "
+    + "Default 0.",
+)
+def main(route_id, echo, sleep):
     """Run the main CLI Program."""
+    time.sleep(sleep)
     loop = True  # for control flow later
     pygame.init()
 

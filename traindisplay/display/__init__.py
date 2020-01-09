@@ -5,8 +5,8 @@ import typing
 from pathlib import Path
 
 import pygame
-
 import underground
+
 from traindisplay.display.metadata import ROUTE_COLORS
 
 DATA_PATH = Path(__file__).parent.parent / "data"
