@@ -4,7 +4,7 @@ on: push
 
 jobs:
   build:
-    name: Lint and Test
+    name: Push
 
     runs-on: ubuntu-latest
     strategy:
@@ -30,12 +30,9 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install poetry
-          poetry install
-
-      - name: Pydocstyle
-        run: poetry run pydocstyle traindisplay test/*.py --verbose
+          pip install --editable .[dev]
 
       - name: Black
         run: poetry run black traindisplay test --check --verbose

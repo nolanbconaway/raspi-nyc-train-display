@@ -11,12 +11,14 @@ import underground
 
 from traindisplay import db, mta
 
+from .. import current_time
+
 
 def persist_stop_times(
     route_id: str, stop_id: str, api_key: str = None, echo: bool = False
 ):
     """Query the API and persist the stop times in the database."""
-    last_check_dt = underground.dateutils.current_time()
+    last_check_dt = current_time()
     stops_dt = mta.next_train_times(route_id, stop_id, api_key=api_key)
 
     # set values
@@ -37,7 +39,7 @@ def persist_stop_times(
     "route_id",
     envvar="TRAIN_DISPLAY_ROUTE_ID",
     required=True,
-    type=click.Choice(set(underground.metadata.ROUTE_FEED_MAP.keys())),
+    type=click.Choice(underground.metadata.VALID_ROUTES),
     help="Route ID to find stops for. Can be read from $TRAIN_DISPLAY_ROUTE_ID.",
 )
 @click.option(
