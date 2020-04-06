@@ -4,8 +4,6 @@
   <img src="img/pi.jpg" width="480" height="320">
 </p>
 
-[![GitHub Actions status](https://github.com/nolanbconaway/raspi-nyc-train-display/workflows/Main%20Workflow/badge.svg)](https://github.com/nolanbconaway/raspi-nyc-train-display/actions)
-
 This is a raspberry pi application designed to run on a [PiTFT](https://www.adafruit.com/product/2441) which displays upcoming trains to a NYC subway stop.
 
 ## Quickstart
@@ -16,7 +14,7 @@ This program consists of two processes: an MTA checker, and a Display updater. T
 
 ### Get an API Key
 
-To request MTA realtime data, you'll need an API key, [register here](https://datamine.mta.info/user/register).
+To request MTA realtime data, you'll need an API key, [register here](https://api.mta.info/#/landing).
 
 ### Edit supervisord.conf (or supervisord-rpi.conf)
 
@@ -61,7 +59,7 @@ This program consists of two processes: an MTA checker, and a Display updater. T
 
 ### MTA Checker
 
-The MTA realtime API is queried efficiently, only when I (Nolan) have decided new.information is needed. The rules are based on:
+The MTA realtime API is queried efficiently, only when I (Nolan) have decided new information is needed. The rules are based on:
 
 1. The last time the API was queried. At a minimum checking every `N` seconds, default 300, but not more than once per `M` seconds (default 60).
 2. When upcoming arrivals are scheduled, checking if a known arrival has elapsed.
@@ -125,9 +123,3 @@ framebuffer interface is not accessible.
 * `SDL_VIDEODRIVER` : Set to `'fbcon'` for framebuffer display on a raspberry pi.
 * `SDL_FBDEV` : Set to `'/dev/fb1'` for framebuffer display on a raspberry pi.
 * `PYGAME_HIDE_SUPPORT_PROMPT` : Set to `'hide'` to disable the pygame welcome message.
-
-## TODO
-
-* [x] Add better text color for some train likes (e.g., 4, 5, 6).
-* [x] Raspi setup docs. Or host an image somewhere?
-

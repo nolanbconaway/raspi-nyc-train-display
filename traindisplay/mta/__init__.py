@@ -5,6 +5,8 @@ import typing
 
 import underground
 
+from .. import current_time
+
 
 def next_train_times(
     route_id: str, stop_id: str, api_key: str = None
@@ -24,8 +26,7 @@ def next_train_times(
         A sorted list of the planned stop times.
 
     """
-    feed_id = underground.metadata.get_feed_id(route_id)
-    feed = underground.SubwayFeed.get(feed_id, api_key=api_key)
+    feed = underground.SubwayFeed.get(route_id, api_key=api_key)
     return sorted(feed.extract_stop_dict().get(route_id, {}).get(stop_id, list()))
 
 
@@ -42,7 +43,7 @@ def needs_update(last_check_dt: datetime.datetime, stops_dt: datetime.datetime) 
     if last_check_dt is None:
         return True
 
-    now_dt = underground.dateutils.current_time()
+    now_dt = current_time()
 
     if last_check_dt > now_dt:
         raise ValueError("Last check is in the future. Something is wrong.")

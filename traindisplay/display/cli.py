@@ -13,6 +13,8 @@ import underground
 
 from traindisplay import db, display
 
+from .. import current_time
+
 
 def check_continue_loop():
     """Handle pygame events to determine if we should be looping."""
@@ -32,7 +34,7 @@ def check_continue_loop():
     "route_id",
     envvar="TRAIN_DISPLAY_ROUTE_ID",
     required=True,
-    type=click.Choice(set(underground.metadata.ROUTE_FEED_MAP.keys())),
+    type=click.Choice(underground.metadata.VALID_ROUTES),
     help="Route ID to find stops for. Can be read from $TRAIN_DISPLAY_ROUTE_ID.",
 )
 @click.option(
@@ -63,7 +65,7 @@ def main(route_id, echo, sleep):
 
     # update once to init the display
     display.display_train_times(route_id, db.get_last_check(), db.get_next_stops())
-    db.set_last_display(underground.dateutils.current_time())
+    db.set_last_display(current_time())
     if echo:
         click.echo("Display updated with latest from db.")
 
@@ -81,11 +83,11 @@ def main(route_id, echo, sleep):
             # update if needed
             if update_needed:
                 display.display_train_times(route_id, last_check_dt, stops_dt)
-                db.set_last_display(underground.dateutils.current_time())
+                db.set_last_display(current_time())
 
             # echo if needed
             if echo:
-                now_str = underground.dateutils.current_time().strftime("%H:%M:%S")
+                now_str = current_time().strftime("%H:%M:%S")
                 update_flag_str = (
                     "Display updated" if update_needed else "Display not updated"
                 )

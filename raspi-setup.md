@@ -10,7 +10,7 @@ I suppose I am also assuming you have some familiarity with command line tools (
 
 ## Before you do anything: get an API Key
 
-To request MTA realtime data, you'll need an API key, [register here](https://datamine.mta.info/user/register).
+To request MTA realtime data, you'll need an API key, [register here](https://api.mta.info/#/landing).
 
 ## Step 1: Install the 2018-03-14 raspbian image to a microSD card
 

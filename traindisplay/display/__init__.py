@@ -5,11 +5,18 @@ import typing
 from pathlib import Path
 
 import pygame
-import underground
 
 from traindisplay.display.metadata import ROUTE_COLORS
 
+from .. import current_time
+
 DATA_PATH = Path(__file__).parent.parent / "data"
+
+
+def datetime_to_timestring(dttm: datetime.datetime) -> str:
+    """Convert a datetime to a time string reading HH:MM."""
+    res = dttm.strftime("%I:%M")
+    return res if res[0] != "0" else res[1:]
 
 
 def hex2rgb(hexstr: str) -> typing.Tuple[int]:
@@ -29,7 +36,7 @@ def needs_update(
     if last_display_dt is None:
         return True
 
-    now_dt = underground.dateutils.current_time()
+    now_dt = current_time()
 
     # defensive programming
     if last_check_dt > now_dt:
@@ -64,9 +71,7 @@ def display_train_times(
 
     # make strings out of stop datetimes
     if stops_dt:
-        stops_dt_str = [
-            underground.dateutils.datetime_to_timestring(i) for i in stops_dt[:3]
-        ]
+        stops_dt_str = [datetime_to_timestring(i) for i in stops_dt[:3]]
     else:
         stops_dt_str = ["No", "trains", ":-("]
 
@@ -101,7 +106,7 @@ def display_train_times(
 
     # add last update dt
     if last_check_dt:
-        last_check_str = underground.dateutils.datetime_to_timestring(last_check_dt)
+        last_check_str = datetime_to_timestring(last_check_dt)
         last_check_str = f"Schedule updated {last_check_str}"
     else:
         last_check_str = ""
