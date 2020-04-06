@@ -35,7 +35,7 @@ jobs:
           pip install --editable .[dev]
 
       - name: Black
-        run: poetry run black traindisplay test --check --verbose
+        run: black traindisplay test --check --verbose
 
       - name: Pytest
-        run: poetry run pytest . -v
+        run: pytest . -v
